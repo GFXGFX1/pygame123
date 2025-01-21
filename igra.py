@@ -12,7 +12,7 @@ red = (255, 0, 0)
 purple = (255, 0, 255)
 yellow = (255, 255, 0)
 gblue = (0, 255, 255)
-WALLET_FILE = "../walli12312et.csv"
+WALLET_FILE = "../wallet.csv"
 
 class MyApp:
     def __init__(self):
