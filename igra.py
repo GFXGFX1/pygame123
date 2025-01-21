@@ -17,3 +17,7 @@ WALLET_FILE = "../wallet.csv"
 class MyApp:
     def __init__(self):
         self.app = QApplication(sys.argv)
+
+if __name__ == "__main__":
+    my_app = MyApp()
+    sys.exit(my_app.app.exec())
