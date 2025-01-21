@@ -14,7 +14,7 @@ red = (255, 0, 0)
 purple = (255, 0, 255)
 yellow = (255, 255, 0)
 gblue = (0, 255, 255)
-WALLET_FILE = "../wallet.csv"
+WALLET_FILE = "wallet.csv"
 
 
 class MyApp:
@@ -37,11 +37,47 @@ class LoginDialog(QDialog):
         self.password_input.setEchoMode(QLineEdit.EchoMode.Password)
         layout.addRow("Password:", self.password_input)
         self.login_button = QPushButton("Login")
+        self.login_button.clicked.connect(self.check_login)
         layout.addRow(self.login_button)
         self.register_button = QPushButton("Register")
         self.register_button.clicked.connect(self.open_registration_dialog)
         layout.addRow(self.register_button)
         self.setLayout(layout)
+    def check_login(self):
+        username = self.username_input.text()
+        password = self.password_input.text()
+        if self.username_exists(username):
+            if self.validate_login(username, password):
+                self.app.close_all_windows()
+                self.app.open_menu_dialog(username)
+                un = username
+                self.accept()
+            else:
+                QMessageBox.warning(self, "Error", "Invalid username or password.")
+        else:
+            QMessageBox.warning(self, "Error", "User  does not exist.")
+    def username_exists(self, username):
+        try:
+            if os.path.exists(WALLET_FILE):
+                with open(WALLET_FILE, 'r') as file:
+                    reader = csv.reader(file)
+                    for row in reader:
+                        if row[0] == username:
+                            return True
+        except Exception as e:
+            QMessageBox.warning(self, "Error", f"Failed to check username: {e}")
+        return False
+    def validate_login(self, username, password):
+        try:
+            if os.path.exists(WALLET_FILE):
+                with open(WALLET_FILE, 'r') as file:
+                    reader = csv.reader(file)
+                    for row in reader:
+                        if row[0] == username and row[2] == password:
+                            return True
+        except Exception as e:
+            QMessageBox.warning(self, "Error", f"Failed to validate login: {e}")
+        return False
 
     def open_registration_dialog(self):
         registration_dialog = RegistrationDialog(self.app)
