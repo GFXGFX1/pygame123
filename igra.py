@@ -248,6 +248,7 @@ def startGame():
 
     # Глобальная переменная для хранения очков после игры
     score2 = 0
+    # djn nen ghjljk;b? jr&
 
 
 if __name__ == "__main__":
