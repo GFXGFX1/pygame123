@@ -28,8 +28,7 @@ class MyApp:
         menu_dialog.exec()
 
     def start_game(self):
-        # igra
-        pass
+        startGame()
 
     def close_all_windows(self):
         self.login_dialog.close()
@@ -185,8 +184,13 @@ class MenuDialog(QDialog):
         QMessageBox.information(self, "Shop", "Shop feature not implemented yet.")
 
     def start_game(self):
-        # igra
-        pass
+        self.app.start_game()
+
+
+def startGame():
+    Trollicon = pygame.image.load('Trollman.png')
+    pygame.display.set_icon(Trollicon)
+    # Продолжу
 
 
 if __name__ == "__main__":
