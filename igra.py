@@ -187,6 +187,30 @@ class MenuDialog(QDialog):
         self.app.start_game()
 
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, filename):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(filename).convert()
+        self.rect = self.image.get_rect()
+        self.rect.top = y
+        self.rect.left = x
+        self.change_x = 0
+        self.change_y = 0
+
+    def changespeed(self, x, y):
+        self.change_x = x
+        self.change_y = y
+
+    def update(self, walls):
+        # Update the position based on speed
+        self.rect.x += self.change_x
+        self.rect.y += self.change_y
+        # Collision detection
+        if pygame.sprite.spritecollideany(self, walls):
+            self.rect.x -= self.change_x
+            self.rect.y -= self.change_y
+
+
 def startGame():
     Trollicon = pygame.image.load('Trollman.png')
     pygame.display.set_icon(Trollicon)
