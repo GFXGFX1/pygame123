@@ -15,6 +15,7 @@ purple = (255, 0, 255)
 yellow = (255, 255, 0)
 gblue = (0, 255, 255)
 WALLET_FILE = "wallet.csv"
+pygame.init()
 
 
 class MyApp:
@@ -221,6 +222,32 @@ def startGame():
             all_sprites_list.add(wall)
 
         return wall_list
+        
+    pygame.init()
+
+    screen = pygame.display.set_mode([606, 606])
+    pygame.display.set_caption('Pacman')
+
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    background.fill(black)
+
+    clock = pygame.time.Clock()
+    pygame.font.init()
+    font = pygame.font.Font("freesansbold.ttf", 24)
+
+    w = 303 - 16
+    p_h = (7 * 60) + 19
+    m_h = (4 * 60) + 19
+    b_h = (3 * 60) + 19
+    i_w = 303 - 16 - 32
+    c_w = 303 + (32 - 16)
+    BASE_GHOST_SPEED = 15  # Базовая скорость призраков
+    SPEED_INCREMENT = 1
+    ghost_speed = BASE_GHOST_SPEED
+
+    # Глобальная переменная для хранения очков после игры
+    score2 = 0
 
 
 if __name__ == "__main__":
