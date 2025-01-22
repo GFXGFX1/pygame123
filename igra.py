@@ -23,6 +23,17 @@ class MyApp:
         self.login_dialog = LoginDialog(self)
         self.login_dialog.exec()
 
+    def open_menu_dialog(self, username):
+        menu_dialog = MenuDialog(self, username)
+        menu_dialog.exec()
+
+    def start_game(self):
+        # igra
+        pass
+
+    def close_all_windows(self):
+        self.login_dialog.close()
+
 
 class LoginDialog(QDialog):
     def __init__(self, app):
@@ -78,12 +89,9 @@ class LoginDialog(QDialog):
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Failed to validate login: {e}")
         return False
-
     def open_registration_dialog(self):
         registration_dialog = RegistrationDialog(self.app)
         registration_dialog.exec()
-
-
 class RegistrationDialog(QDialog):
     def __init__(self, app):
         super().__init__()
@@ -103,7 +111,6 @@ class RegistrationDialog(QDialog):
         self.ok_button.clicked.connect(self.check_registration)
         layout.addRow(self.ok_button)
         self.setLayout(layout)
-
     def check_registration(self):
         username = self.username_input.text()
         password = self.password_input.text()
@@ -120,11 +127,11 @@ class RegistrationDialog(QDialog):
             return
         self.save_user(username, password)
         QMessageBox.information(self, "Success", "Registration successful!")
-        #Димон, доделай
-
+        self.app.close_all_windows()
+        self.app.open_menu_dialog(username)
+        self.accept()
     def validate_username(self, username):
         return 3 <= len(username) <= 15 and re.match("^[A-Za-z0-9]+$", username)
-
     def username_exists(self, username):
         try:
             if os.path.exists(WALLET_FILE):
@@ -136,7 +143,6 @@ class RegistrationDialog(QDialog):
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Failed to check username: {e}")
         return False
-
     def save_user(self, username, password):
         try:
             with open(WALLET_FILE, 'a', newline='') as file:
@@ -144,6 +150,31 @@ class RegistrationDialog(QDialog):
                 writer.writerow([username, 0, password])
         except Exception as e:
             QMessageBox.warning(self, "Error", f"Failed to save user: {e}")
+
+class MenuDialog(QDialog):
+    def __init__(self, app, username):
+        global un
+        super().__init__()
+        self.app = app
+        self.username = username
+        un = username
+        print(un)
+        self.setWindowTitle("Menu")
+        self.setGeometry(100, 100, 300, 200)
+        layout = QFormLayout()
+        self.shop_button = QPushButton("Shop")
+        self.shop_button.clicked.connect(self.open_shop)
+        layout.addRow(self.shop_button)
+        self.play_button = QPushButton("Play")
+        self.play_button.clicked.connect(self.start_game)
+        layout.addRow(self.play_button)
+        self.setLayout(layout)
+    def open_shop(self):
+        QMessageBox.information(self, "Shop", "Shop feature not implemented yet.")
+    def start_game(self):
+        #igra
+        pass
+
 
 if __name__ == "__main__":
     my_app = MyApp()
