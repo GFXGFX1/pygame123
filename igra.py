@@ -223,6 +223,12 @@ def startGame():
 
         return wall_list
 
+    def setupGate(all_sprites_list):
+        gate = pygame.sprite.RenderPlain()
+        gate.add(Wall(282, 242, 42, 2, white))
+        all_sprites_list.add(gate)
+        return gate
+
     class Block(pygame.sprite.Sprite):
         def __init__(self, color, width, height):
             pygame.sprite.Sprite.__init__(self)
@@ -325,7 +331,46 @@ def startGame():
 
     # Глобальная переменная для хранения очков после игры
     score2 = 0
+
     # djn nen ghjljk;b? jr&
+    def startGame():
+        global score2, ghost_speed, un
+        print(un)
+        all_sprites_list = pygame.sprite.RenderPlain()
+        block_list = pygame.sprite.RenderPlain()
+        monsta_list = pygame.sprite.RenderPlain()
+        pacman_collide = pygame.sprite.RenderPlain()
+        wall_list = setupRoomOne(all_sprites_list)
+        gate = setupGate(all_sprites_list)
+
+        p_turn = 0
+        p_steps = 0
+        b_turn = 0
+        b_steps = 0
+        i_turn = 0
+        i_steps = 0
+        c_turn = 0
+        c_steps = 0
+
+        Pacman = Player(w, p_h, "pacman.png")
+        all_sprites_list.add(Pacman)
+        pacman_collide.add(Pacman)
+
+        Blinky = Ghost(w, b_h, "Blinky.png")
+        monsta_list.add(Blinky)
+        all_sprites_list.add(Blinky)
+
+        Pinky = Ghost(w, m_h, "Pinky.png")
+        monsta_list.add(Pinky)
+        all_sprites_list.add(Pinky)
+
+        Inky = Ghost(i_w, m_h, "Inky.png")
+        monsta_list.add(Inky)
+        all_sprites_list.add(Inky)
+
+        Clyde = Ghost(c_w, m_h, "Clyde.png")
+        monsta_list.add(Clyde)
+        all_sprites_list.add(Clyde)
 
 
 if __name__ == "__main__":
