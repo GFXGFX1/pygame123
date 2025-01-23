@@ -202,7 +202,7 @@ def startGame():
             self.rect = self.image.get_rect()
             self.rect.top = y
             self.rect.left = x
-            
+
     def setupRoomOne(all_sprites_list):
         wall_list = pygame.sprite.RenderPlain()
         walls = [[0, 0, 6, 600], [0, 0, 600, 6], [0, 600, 606, 6], [600, 0, 6, 606],
@@ -222,7 +222,16 @@ def startGame():
             all_sprites_list.add(wall)
 
         return wall_list
-        
+
+    class Block(pygame.sprite.Sprite):
+        def __init__(self, color, width, height):
+            pygame.sprite.Sprite.__init__(self)
+            self.image = pygame.Surface([width, height])
+            self.image.fill(white)
+            self.image.set_colorkey(white)
+            pygame.draw.ellipse(self.image, color, [0, 0, width, height])
+            self.rect = self.image.get_rect()
+
     pygame.init()
 
     screen = pygame.display.set_mode([606, 606])
