@@ -402,7 +402,6 @@ def startGame():
         Clyde = Ghost(c_w, m_h, "Clyde.png")
         monsta_list.add(Clyde)
         all_sprites_list.add(Clyde)
-        
 
         for row in range(19):
             for column in range(19):
@@ -426,6 +425,33 @@ def startGame():
         bll = len(block_list)
         score = 0
         done = False
+        
+        while not done:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    done = True
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        Pacman.changespeed(-30, 0)
+                    if event.key == pygame.K_RIGHT:
+                        Pacman.changespeed(30, 0)
+                    if event.key == pygame.K_UP:
+                        Pacman.changespeed(0, -30)
+                    if event.key == pygame.K_DOWN:
+                        Pacman.changespeed(0, 30)
+
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        Pacman.changespeed(30, 0)
+                    if event.key == pygame.K_RIGHT:
+                        Pacman.changespeed(-30, 0)
+                    if event.key == pygame.K_UP or:
+                        Pacman.changespeed(0, 30)
+                    if event.key == pygame.K_DOWN:
+                        Pacman.changespeed(0, -30)
+
+            Pacman.update(wall_list, gate)
 
 
 if __name__ == "__main__":
