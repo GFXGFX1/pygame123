@@ -372,6 +372,29 @@ def startGame():
         monsta_list.add(Clyde)
         all_sprites_list.add(Clyde)
 
+        for row in range(19):
+            for column in range(19):
+                if (row == 7 or row == 8) and (column == 8 or column == 9 or column == 10):
+                    continue
+                else:
+                    block = Block(yellow, 4, 4)
+                    block.rect.x = (30 * column + 6) + 26
+                    block.rect.y = (30 * row + 6) + 26
+
+                    b_collide = pygame.sprite.spritecollide(block, wall_list, False)
+                    p_collide = pygame.sprite.spritecollide(block, pacman_collide, False)
+                    if b_collide:
+                        continue
+                    elif p_collide:
+                        continue
+                    else:
+                        block_list.add(block)
+                        all_sprites_list.add(block)
+
+        bll = len(block_list)
+        score = 0
+        done = False
+
 
 if __name__ == "__main__":
     my_app = MyApp()
