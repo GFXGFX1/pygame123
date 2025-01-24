@@ -187,6 +187,29 @@ class MenuDialog(QDialog):
     def start_game(self):
         self.app.start_game()
 
+class Player(pygame.sprite.Sprite):
+    def __init__(self, x, y, filename):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(filename).convert()
+        self.rect = self.image.get_rect()
+        self.rect.top = y
+        self.rect.left = x
+        self.change_x = 0
+        self.change_y = 0
+
+    def changespeed(self, x, y):
+        self.change_x = x
+        self.change_y = y
+
+    def update(self, walls):
+        # Update the position based on speed
+        self.rect.x += self.change_x
+        self.rect.y += self.change_y
+        # Collision detection
+        if pygame.sprite.spritecollideany(self, walls):
+            self.rect.x -= self.change_x
+            self.rect.y -= self.change_y
+
 
 def startGame():
     Trollicon = pygame.image.load('Trollman.png')
@@ -496,6 +519,40 @@ def startGame():
 
             text = font.render("Score: " + str(score) + "/" + str(bll), True, red)
             screen.blit(text, [10, 10])
+
+            if score == bll:
+                doNext("Congratulations, you won!", 145, all_sprites_list, block_list, monsta_list, pacman_collide,
+                       wall_list, gate, score)
+
+            monsta_hit_list = pygame.sprite.spritecollide(Pacman, monsta_list, False)
+
+            if monsta_hit_list:
+                doNext("Game Over", 235, all_sprites_list, block_list, monsta_list, pacman_collide, wall_list, gate,
+                       score)
+
+            pygame.display.flip()
+            clock.tick(10)
+
+        # Функция для обработки результата игры
+
+    def doNext(message, left, all_sprites_list, block_list, monsta_list, pacman_collide, wall_list, gate):
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
+                    if event.key == pygame.K_RETURN:
+                        del all_sprites_list
+                        del block_list
+                        del monsta_list
+                        del pacman_collide
+                        del wall_list
+                        del gate
+                        startGame()
 
 
 if __name__ == "__main__":
