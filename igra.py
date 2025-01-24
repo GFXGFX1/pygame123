@@ -215,10 +215,6 @@ def startGame():
     Trollicon = pygame.image.load('Trollman.png')
     pygame.display.set_icon(Trollicon)
 
-    pygame.mixer.init()
-    pygame.mixer.music.load('pacman.mp3')
-    pygame.mixer.music.play(-1, 0.0)
-
     # Продолжу
 
     class Wall(pygame.sprite.Sprite):
@@ -539,7 +535,10 @@ def startGame():
 
         # Функция для обработки результата игры
 
-    def doNext(message, left, all_sprites_list, block_list, monsta_list, pacman_collide, wall_list, gate):
+    def doNext(message, left, all_sprites_list, block_list, monsta_list, pacman_collide, wall_list, gate, score):
+        global score2  # Указываем, что используем глобальную переменную
+        score2 = score  # Сохраняем количество очков в score2
+        update_balance(un, score2)
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -557,6 +556,43 @@ def startGame():
                         del wall_list
                         del gate
                         startGame()
+
+            w = pygame.Surface((400, 200))
+            w.set_alpha(10)
+            w.fill((128, 128, 128))
+            screen.blit(w, (100, 200))
+
+            text1 = font.render(message, True, white)
+            screen.blit(text1, [left, 233])
+
+            text2 = font.render("To play again, press ENTER.", True, white)
+            screen.blit(text2, [135, 303])
+            text3 = font.render("To quit, press ESCAPE.", True, white)
+            screen.blit(text3, [165, 333])
+            pygame.display.flip()
+
+            clock.tick(10)
+
+    def update_balance(un, score2):
+        # Читаем содержимое файла wallet.csv
+        rows = []
+        with open('../wallet.csv', mode='r', newline='') as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                rows.append(row)
+
+        # Обновляем баланс для пользователя
+        for row in rows:
+            if row['username'] == un:
+                row['balance'] = str(int(row['balance']) + score2)  # Увеличиваем баланс на score2
+
+        # Записываем обновленные данные обратно в wallet.csv
+        with open('../wallet.csv', mode='w', newline='') as file:
+            fieldnames = ['username', 'balance', 'password']
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
+
 
     startGame()
     pygame.quit()
