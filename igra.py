@@ -554,6 +554,11 @@ def startGame():
                         del gate
                         startGame()
 
+    startGame()
+    pygame.quit()
+
+
+
 
 if __name__ == "__main__":
     my_app = MyApp()
