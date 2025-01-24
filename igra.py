@@ -215,6 +215,10 @@ def startGame():
     Trollicon = pygame.image.load('Trollman.png')
     pygame.display.set_icon(Trollicon)
 
+    pygame.mixer.init()
+    pygame.mixer.music.load('pacman.mp3')
+    pygame.mixer.music.play(-1, 0.0)
+
     # Продолжу
 
     class Wall(pygame.sprite.Sprite):
@@ -449,35 +453,30 @@ def startGame():
         score = 0
         done = False
 
-        PSPEED = 30
-
-        # Define key mappings
-        key_mapping = {
-            pygame.K_LEFT: (-PSPEED, 0),
-            pygame.K_a: (-PSPEED, 0),
-            pygame.K_RIGHT: (PSPEED, 0),
-            pygame.K_d: (PSPEED, 0),
-            pygame.K_UP: (0, -PSPEED),
-            pygame.K_w: (0, -PSPEED),
-            pygame.K_DOWN: (0, PSPEED),
-            pygame.K_s: (0, PSPEED),
-        }
-
-        # Main game loop
-        running = True
-        while running:
+        while not done:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    done = True
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key in key_mapping:
-                        Pacman.changespeed(*key_mapping[event.key])
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        Pacman.changespeed(-30, 0)
+                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        Pacman.changespeed(30, 0)
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        Pacman.changespeed(0, -30)
+                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        Pacman.changespeed(0, 30)
 
                 if event.type == pygame.KEYUP:
-                    if event.key in key_mapping:
-                        # Stop movement when the key is released
-                        Pacman.changespeed(0, 0)
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        Pacman.changespeed(30, 0)
+                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        Pacman.changespeed(-30, 0)
+                    if event.key == pygame.K_UP or event.key == pygame.K_w:
+                        Pacman.changespeed(0, 30)
+                    if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        Pacman.changespeed(0, -30)
 
             Pacman.update(wall_list, gate)
 
