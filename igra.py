@@ -215,6 +215,10 @@ def startGame():
     Trollicon = pygame.image.load('Trollman.png')
     pygame.display.set_icon(Trollicon)
 
+    pygame.mixer.init()
+    pygame.mixer.music.load('pacman.mp3')
+    pygame.mixer.music.play(-1, 0.0)
+
     # Продолжу
 
     class Wall(pygame.sprite.Sprite):
