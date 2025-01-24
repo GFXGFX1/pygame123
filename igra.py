@@ -425,31 +425,36 @@ def startGame():
         bll = len(block_list)
         score = 0
         done = False
-        
-        while not done:
+
+        PSPEED = 30
+
+        # Define key mappings
+        key_mapping = {
+            pygame.K_LEFT: (-PSPEED, 0),
+            pygame.K_a: (-PSPEED, 0),
+            pygame.K_RIGHT: (PSPEED, 0),
+            pygame.K_d: (PSPEED, 0),
+            pygame.K_UP: (0, -PSPEED),
+            pygame.K_w: (0, -PSPEED),
+            pygame.K_DOWN: (0, PSPEED),
+            pygame.K_s: (0, PSPEED),
+        }
+
+        # Main game loop
+        running = True
+        while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    done = True
+                    running = False
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
-                        Pacman.changespeed(-30, 0)
-                    if event.key == pygame.K_RIGHT:
-                        Pacman.changespeed(30, 0)
-                    if event.key == pygame.K_UP:
-                        Pacman.changespeed(0, -30)
-                    if event.key == pygame.K_DOWN:
-                        Pacman.changespeed(0, 30)
+                    if event.key in key_mapping:
+                        Pacman.changespeed(*key_mapping[event.key])
 
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
-                        Pacman.changespeed(30, 0)
-                    if event.key == pygame.K_RIGHT:
-                        Pacman.changespeed(-30, 0)
-                    if event.key == pygame.K_UP or:
-                        Pacman.changespeed(0, 30)
-                    if event.key == pygame.K_DOWN:
-                        Pacman.changespeed(0, -30)
+                    if event.key in key_mapping:
+                        # Stop movement when the key is released
+                        Pacman.changespeed(0, 0)
 
             Pacman.update(wall_list, gate)
 
