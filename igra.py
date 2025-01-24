@@ -494,6 +494,9 @@ def startGame():
             all_sprites_list.draw(screen)
             monsta_list.draw(screen)
 
+            text = font.render("Score: " + str(score) + "/" + str(bll), True, red)
+            screen.blit(text, [10, 10])
+
 
 if __name__ == "__main__":
     my_app = MyApp()
