@@ -458,6 +458,42 @@ def startGame():
 
             Pacman.update(wall_list, gate)
 
+            # Обновление призраков
+            returned = Pinky.changespeed(Pinky_directions, False, p_turn, p_steps, pl)
+            p_turn = returned[0]
+            p_steps = returned[1]
+            Pinky.changespeed(Pinky_directions, False, p_turn, p_steps, pl)
+            Pinky.update(wall_list, False)
+
+            returned = Blinky.changespeed(Blinky_directions, False, b_turn, b_steps, bl)
+            b_turn = returned[0]
+            b_steps = returned[1]
+            Blinky.changespeed(Blinky_directions, False, b_turn, b_steps, bl)
+            Blinky.update(wall_list, False)
+
+            returned = Inky.changespeed(Inky_directions, False, i_turn, i_steps, il)
+            i_turn = returned[0]
+            i_steps = returned[1]
+            Inky.changespeed(Inky_directions, False, i_turn, i_steps, il)
+            Inky.update(wall_list, False)
+
+            returned = Clyde.changespeed(Clyde_directions, "clyde", c_turn, c_steps, cl)
+            c_turn = returned[0]
+            c_steps = returned[1]
+            Clyde.changespeed(Clyde_directions, "clyde", c_turn, c_steps, cl)
+            Clyde.update(wall_list, False)
+
+            blocks_hit_list = pygame.sprite.spritecollide(Pacman, block_list, True)
+
+            if len(blocks_hit_list) > 0:
+                score += len(blocks_hit_list)
+
+            screen.fill(black)
+            wall_list.draw(screen)
+            gate.draw(screen)
+            all_sprites_list.draw(screen)
+            monsta_list.draw(screen)
+
 
 if __name__ == "__main__":
     my_app = MyApp()
