@@ -212,11 +212,11 @@ class Player(pygame.sprite.Sprite):
 
 
 def startGame():
-    Trollicon = pygame.image.load('../igra/Trollman.png')
+    Trollicon = pygame.image.load('Trollman.png')
     pygame.display.set_icon(Trollicon)
 
     pygame.mixer.init()
-    pygame.mixer.music.load('../igra/pacman.mp3')
+    pygame.mixer.music.load('pacman.mp3')
     pygame.mixer.music.play(-1, 0.0)
 
     # Продолжу
@@ -410,23 +410,23 @@ def startGame():
         c_turn = 0
         c_steps = 0
 
-        Pacman = Player(w, p_h, "../igra/pacman.png")
+        Pacman = Player(w, p_h, "pacman.png")
         all_sprites_list.add(Pacman)
         pacman_collide.add(Pacman)
 
-        Blinky = Ghost(w, b_h, "../igra/Blinky.png")
+        Blinky = Ghost(w, b_h, "Blinky.png")
         monsta_list.add(Blinky)
         all_sprites_list.add(Blinky)
 
-        Pinky = Ghost(w, m_h, "../igra/Pinky.png")
+        Pinky = Ghost(w, m_h, "Pinky.png")
         monsta_list.add(Pinky)
         all_sprites_list.add(Pinky)
 
-        Inky = Ghost(i_w, m_h, "../igra/Inky.png")
+        Inky = Ghost(i_w, m_h, "Inky.png")
         monsta_list.add(Inky)
         all_sprites_list.add(Inky)
 
-        Clyde = Ghost(c_w, m_h, "../igra/Clyde.png")
+        Clyde = Ghost(c_w, m_h, "Clyde.png")
         monsta_list.add(Clyde)
         all_sprites_list.add(Clyde)
 
