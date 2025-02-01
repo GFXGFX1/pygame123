@@ -2,6 +2,7 @@ import sys
 import pygame
 import csv
 import re
+import sqlite3
 import os
 from PyQt6.QtWidgets import QApplication, QDialog, QFormLayout, QLineEdit, QPushButton, QMessageBox
 
@@ -14,9 +15,22 @@ red = (255, 0, 0)
 purple = (255, 0, 255)
 yellow = (255, 255, 0)
 gblue = (0, 255, 255)
-WALLET_FILE = "wallet.csv"
+WALLET_FILE = "wallet.db"
 pygame.init()
 
+def initialize_database():
+    conn = sqlite3.connect(WALLET_FILE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT PRIMARY KEY,
+            balance INTEGER DEFAULT 0,
+            password TEXT,
+            best_score INTEGER DEFAULT 0
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
 class MyApp:
     def __init__(self):
@@ -600,5 +614,6 @@ def startGame():
 
 
 if __name__ == "__main__":
+    initialize_database()
     my_app = MyApp()
     sys.exit(my_app.app.exec())
