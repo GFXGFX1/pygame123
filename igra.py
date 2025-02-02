@@ -18,7 +18,7 @@ red = (255, 0, 0)
 purple = (255, 0, 255)
 yellow = (255, 255, 0)
 gblue = (0, 255, 255)
-WALLET_FILE = "../pygamee/walllet.db"
+WALLET_FILE = "wallet.db"
 pygame.init()
 
 
@@ -38,38 +38,39 @@ def initialize_database():
 
 
 class MyApp(QObject):
-    score_updated = pyqtSignal(int)
+    score_updated = pyqtSignal(int)  # Signal to update the score
 
     def __init__(self):
         super().__init__()
         self.app = QApplication(sys.argv)
         self.user_score = 0
-        self.best_score = 0
-        self.username = None
+        self.best_score = 0  # Initialize best score
+        self.username = None  # Username
 
         self.score_updated.connect(self.update_score_display)
 
-        self.open_login_dialog()
+        self.open_login_dialog()  # Open login dialog
 
     def open_login_dialog(self):
         self.login_dialog = LoginDialog(self)
         self.login_dialog.show()
 
     def open_menu_dialog(self):
-        self.load_user_data(self.username)
+        self.load_user_data(self.username)  # Load user data, including best score
         self.menu_dialog = MenuDialog(self, self.username, self.best_score)
         self.menu_dialog.show()
 
     def start_game(self):
+        # Start the game in a new thread
         pygame_thread = threading.Thread(target=startGame, args=(self.score_updated, self.username))
         pygame_thread.start()
 
     def update_score_display(self, score):
         self.user_score = score
-        if score > self.best_score:
-            self.best_score = score
+        if score > self.best_score:  # Check if current score is better than best
+            self.best_score = score  # Update best score
         if hasattr(self, 'menu_dialog'):
-            self.menu_dialog.update_score(score, self.best_score)
+            self.menu_dialog.update_score(score, self.best_score)  # Pass current and best score
 
     def load_user_data(self, username):
         try:
@@ -78,7 +79,7 @@ class MyApp(QObject):
             cursor.execute('SELECT best_score FROM users WHERE username = ?', (username,))
             result = cursor.fetchone()
             if result:
-                self.best_score = result[0]
+                self.best_score = result[0]  # Load best score
             conn.close()
         except Exception as e:
             print(f"Failed to load user data: {e}")
@@ -106,7 +107,7 @@ class MyApp(QObject):
             self.username = username
             conn.commit()
             conn.close()
-            self.open_menu_dialog()
+            self.open_menu_dialog()  # Open menu after registration
         except Exception as e:
             print(f"Failed to register user: {e}")
 
@@ -119,8 +120,9 @@ class MyApp(QObject):
             if user:
                 self.username = username
                 QMessageBox.information(None, "Login Successful", "You have successfully logged in.")
-                self.open_menu_dialog()
-                self.login_dialog.close()
+                self.open_menu_dialog()  # Open menu after successful login
+                self.login_dialog.close()  # Close the login dialog
+            else:
                 QMessageBox.warning(None, "Login Failed", "Invalid username or password.")
             conn.close()
         except Exception as e:
