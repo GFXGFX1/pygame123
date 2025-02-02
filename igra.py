@@ -1,9 +1,14 @@
+import os
 import sys
+import sqlite3
 import pygame
+import sys
+from PyQt6.QtWidgets import QApplication, QDialog, QFormLayout, QLineEdit, QPushButton, QMessageBox, QLCDNumber
+from PyQt6.QtCore import pyqtSignal, QObject
+import threading
 import csv
 import re
-import os
-from PyQt6.QtWidgets import QApplication, QDialog, QFormLayout, QLineEdit, QPushButton, QMessageBox
+
 
 # Определяем цвета
 black = (0, 0, 0)
@@ -31,22 +36,52 @@ def initialize_database():
     conn.commit()
     conn.close()
 
+class MyApp(QObject):
+    score_updated = pyqtSignal(int)  # Signal to update the score
 
-class MyApp:
     def __init__(self):
+        super().__init__()
         self.app = QApplication(sys.argv)
-        self.login_dialog = LoginDialog(self)
-        self.login_dialog.exec()
+        self.user_score = 0
+        self.best_score = 0  # Initialize best score
+        self.username = None  # Username
 
-    def open_menu_dialog(self, username):
-        menu_dialog = MenuDialog(self, username)
-        menu_dialog.exec()
+        self.score_updated.connect(self.update_score_display)
+
+        self.open_login_dialog()  # Open login dialog
+
+    def open_login_dialog(self):
+        self.login_dialog = LoginDialog(self)
+        self.login_dialog.show()
+
+    def open_menu_dialog(self):
+        self.load_user_data(self.username)  # Load user data, including best score
+        self.menu_dialog = MenuDialog(self, self.username, self.best_score)
+        self.menu_dialog.show()
 
     def start_game(self):
-        startGame()
+        # Start the game in a new thread
+        pygame_thread = threading.Thread(target=startGame, args=(self.score_updated, self.username))
+        pygame_thread.start()
 
-    def close_all_windows(self):
-        self.login_dialog.close()
+    def update_score_display(self, score):
+        self.user_score = score
+        if score > self.best_score:  # Check if current score is better than best
+            self.best_score = score  # Update best score
+        if hasattr(self, 'menu_dialog'):
+            self.menu_dialog.update_score(score, self.best_score)  # Pass current and best score
+
+    def load_user_data(self, username):
+        try:
+            conn = sqlite3.connect(WALLET_FILE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT best_score FROM users WHERE username = ?', (username,))
+            result = cursor.fetchone()
+            if result:
+                self.best_score = result[0]  # Load best score
+            conn.close()
+        except Exception as e:
+            print(f"Failed to load user data: {e}")
 
 
 class LoginDialog(QDialog):
@@ -614,5 +649,6 @@ def startGame():
 
 
 if __name__ == "__main__":
+    initialize_database()
     my_app = MyApp()
     sys.exit(my_app.app.exec())
