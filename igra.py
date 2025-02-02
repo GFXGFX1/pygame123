@@ -9,7 +9,6 @@ import threading
 import csv
 import re
 
-
 # Определяем цвета
 black = (0, 0, 0)
 white = (255, 255, 255)
@@ -19,8 +18,9 @@ red = (255, 0, 0)
 purple = (255, 0, 255)
 yellow = (255, 255, 0)
 gblue = (0, 255, 255)
-WALLET_FILE = "walllet.db"
+WALLET_FILE = "../pygamee/walllet.db"
 pygame.init()
+
 
 def initialize_database():
     conn = sqlite3.connect(WALLET_FILE)
@@ -35,6 +35,7 @@ def initialize_database():
     ''')
     conn.commit()
     conn.close()
+
 
 class MyApp(QObject):
     score_updated = pyqtSignal(int)
@@ -125,6 +126,7 @@ class MyApp(QObject):
         except Exception as e:
             print(f"Failed to login user: {e}")
 
+
 class LoginDialog(QDialog):
     def __init__(self, app):
         super().__init__()
@@ -160,7 +162,6 @@ class LoginDialog(QDialog):
         self.close()
 
 
-
 class RegistrationDialog(QDialog):
     def __init__(self, app):
         super().__init__()
@@ -190,29 +191,50 @@ class RegistrationDialog(QDialog):
 
 
 class MenuDialog(QDialog):
-    def __init__(self, app, username):
-        global un
+    def __init__(self, app, username, best_score):
         super().__init__()
         self.app = app
         self.username = username
-        un = username
-        print(un)
         self.setWindowTitle("Menu")
-        self.setGeometry(100, 100, 300, 200)
+        self.setGeometry(100, 100, 300, 300)
+
         layout = QFormLayout()
-        self.shop_button = QPushButton("Shop")
-        self.shop_button.clicked.connect(self.open_shop)
-        layout.addRow(self.shop_button)
+
+        self.score_display = QLCDNumber(self)
+        self.score_display.setDigitCount(6)
+        self.score_display.display(self.app.user_score)
+        layout.addRow("Current Score:", self.score_display)
+
+        self.best_score_display = QLCDNumber(self)
+        self.best_score_display.setDigitCount(6)
+        self.best_score_display.display(best_score)
+        layout.addRow("Best Score:", self.best_score_display)
+
         self.play_button = QPushButton("Play")
         self.play_button.clicked.connect(self.start_game)
         layout.addRow(self.play_button)
-        self.setLayout(layout)
 
-    def open_shop(self):
-        QMessageBox.information(self, "Shop", "Shop feature not implemented yet.")
+        self.exit_button = QPushButton("Exit")
+        self.exit_button.clicked.connect(self.close_application)
+        layout.addRow(self.exit_button)
+
+        self.setLayout(layout)
 
     def start_game(self):
         self.app.start_game()
+
+    def update_score(self, score, best_score):
+        self.score_display.display(score)
+        self.best_score_display.display(best_score)
+
+    def close_application(self):
+        reply = QMessageBox.question(self, 'Exit', 'Are you sure you want to exit?',
+                                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                     QMessageBox.StandardButton.No)
+        if reply == QMessageBox.StandardButton.Yes:
+            self.close()
+            pygame.quit()
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y, filename):
@@ -238,7 +260,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.y -= self.change_y
 
 
-def startGame():
+def startGame(score_signal, username):
     Trollicon = pygame.image.load('Trollman.png')
     pygame.display.set_icon(Trollicon)
 
@@ -420,7 +442,6 @@ def startGame():
     # djn nen ghjljk;b? jr&
     def startGame():
         global score2, ghost_speed, un
-        print(un)
         all_sprites_list = pygame.sprite.RenderPlain()
         block_list = pygame.sprite.RenderPlain()
         monsta_list = pygame.sprite.RenderPlain()
@@ -602,7 +623,7 @@ def startGame():
     def update_balance(un, score2):
         # Читаем содержимое файла wallet.csv
         rows = []
-        with open('../igra/wallet.csv', mode='r', newline='') as file:
+        with open('wallet.csv', mode='r', newline='') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 rows.append(row)
@@ -613,17 +634,14 @@ def startGame():
                 row['balance'] = str(int(row['balance']) + score2)  # Увеличиваем баланс на score2
 
         # Записываем обновленные данные обратно в wallet.csv
-        with open('../igra/wallet.csv', mode='w', newline='') as file:
+        with open('wallet.csv', mode='w', newline='') as file:
             fieldnames = ['username', 'balance', 'password']
             writer = csv.DictWriter(file, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(rows)
 
-
     startGame()
     pygame.quit()
-
-
 
 
 if __name__ == "__main__":
