@@ -441,7 +441,7 @@ def startGame(score_signal, username):
 
     # djn nen ghjljk;b? jr&
     def startGame():
-        global score2, ghost_speed, un
+        global score2, ghost_speed
         all_sprites_list = pygame.sprite.RenderPlain()
         block_list = pygame.sprite.RenderPlain()
         monsta_list = pygame.sprite.RenderPlain()
@@ -557,8 +557,11 @@ def startGame(score_signal, username):
 
             if len(blocks_hit_list) > 0:
                 score += len(blocks_hit_list)
+                score_signal.emit(score)
+                update_user_score(username, score)
 
             screen.fill(black)
+
             wall_list.draw(screen)
             gate.draw(screen)
             all_sprites_list.draw(screen)
@@ -569,32 +572,27 @@ def startGame(score_signal, username):
 
             if score == bll:
                 doNext("Congratulations, you won!", 145, all_sprites_list, block_list, monsta_list, pacman_collide,
-                       wall_list, gate, score)
+                       wall_list, gate)
+                update_user_score(username, score)
 
             monsta_hit_list = pygame.sprite.spritecollide(Pacman, monsta_list, False)
 
             if monsta_hit_list:
-                doNext("Game Over", 235, all_sprites_list, block_list, monsta_list, pacman_collide, wall_list, gate,
-                       score)
+                doNext("Game Over", 235, all_sprites_list, block_list, monsta_list, pacman_collide, wall_list, gate)
 
             pygame.display.flip()
             clock.tick(10)
 
         # Функция для обработки результата игры
 
-    def doNext(message, left, all_sprites_list, block_list, monsta_list, pacman_collide, wall_list, gate, score):
-        global score2  # Указываем, что используем глобальную переменную
-        score2 = score  # Сохраняем количество очков в score2
-        update_balance(un, score2)
+    def doNext(message, left, all_sprites_list, block_list, monsta_list, pacman_collide, wall_list, gate):
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
-                        sys.exit()
                     if event.key == pygame.K_RETURN:
                         del all_sprites_list
                         del block_list
@@ -616,32 +614,21 @@ def startGame(score_signal, username):
             screen.blit(text2, [135, 303])
             text3 = font.render("To quit, press ESCAPE.", True, white)
             screen.blit(text3, [165, 333])
+
             pygame.display.flip()
 
-            clock.tick(10)
-
-    def update_balance(un, score2):
-        # Читаем содержимое файла wallet.csv
-        rows = []
-        with open('wallet.csv', mode='r', newline='') as file:
-            reader = csv.DictReader(file)
-            for row in reader:
-                rows.append(row)
-
-        # Обновляем баланс для пользователя
-        for row in rows:
-            if row['username'] == un:
-                row['balance'] = str(int(row['balance']) + score2)  # Увеличиваем баланс на score2
-
-        # Записываем обновленные данные обратно в wallet.csv
-        with open('wallet.csv', mode='w', newline='') as file:
-            fieldnames = ['username', 'balance', 'password']
-            writer = csv.DictWriter(file, fieldnames=fieldnames)
-            writer.writeheader()
-            writer.writerows(rows)
-
+            clock.tick(60)
     startGame()
-    pygame.quit()
+
+def update_user_score(username, new_score):
+    try:
+        conn = sqlite3.connect(WALLET_FILE)
+        cursor = conn.cursor()
+        cursor.execute('UPDATE users SET best_score = ? WHERE username = ?', (new_score, username))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"Failed to update user score: {e}")
 
 
 if __name__ == "__main__":
