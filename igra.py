@@ -63,8 +63,9 @@ class MyApp(QObject):
 
     def start_game(self):
         # Start the game in a new thread
-        pygame_thread = threading.Thread(target=startGame, args=(self.score_updated, self.username))
-        pygame_thread.start()
+        startGame(self.score_updated, self.username)
+        #pygame_thread = threading.Thread(target=startGame, args=(self.score_updated, self.username))
+        #pygame_thread.start()
 
     def update_score_display(self, score):
         self.user_score = score
