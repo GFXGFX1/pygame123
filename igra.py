@@ -1,13 +1,9 @@
-import os
-import sys
 import sqlite3
 import pygame
 import sys
 from PyQt6.QtWidgets import QApplication, QDialog, QFormLayout, QLineEdit, QPushButton, QMessageBox, QLCDNumber
 from PyQt6.QtCore import pyqtSignal, QObject
 import threading
-import csv
-import re
 from map import walls
 
 # Определяем цвета
